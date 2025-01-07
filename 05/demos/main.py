@@ -36,6 +36,7 @@ def add_investment(coin_id, currency, amount, sell):
         "sell": sell,
         "timestamp": datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     }
+    # insert a document into the invetments collection (can be a list of dictionaries)
     investments.insert_one(investment_document)
 
     if sell:
@@ -69,6 +70,6 @@ cli.add_command(import_investments)
 
 if __name__ == "__main__":
     client = MongitaClientDisk()
-    db = client.portfolio
-    investments = db.investments
+    db = client.portfolio # get or create portfolio db
+    investments = db.investments # get or create investments collection
     cli()
