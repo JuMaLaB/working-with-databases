@@ -51,9 +51,7 @@ class Investment(Base):
     def __repr__(self) -> str:
         return f"<Investment coin: {self.coin}, currency: {self.currency}, amount: {self.amount}>"
 
-
-# engine = create_engine("sqlite:///manager.db")
-engine = create_engine("postgresql://postgres:pgpassword@localhost/manager")
+engine = create_engine("sqlite:///manager.db")
 Base.metadata.create_all(engine)
 
 
@@ -76,6 +74,7 @@ def view_portfolio():
 
         investments = portfolio.investments
 
+        # cast to set to avoid duplicate
         coins = set([investment.coin for investment in investments])
         currencies = set([investment.currency for investment in investments])
 
@@ -140,3 +139,33 @@ cli.add_command(view_portfolio)
 
 if __name__ == "__main__":
     cli()
+
+""" 
+.\working-with-databases\04\demo(master)
+(venv) λ py manager.py
+Usage: manager.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add-investment  Create a new investment and add it to a portfolio
+  add-portfolio   Create a new portfolio
+  clear-database  Drop all tables in the database
+  view-portfolio  View the investments in a portfolio
+
+.\working-with-databases\04\demo(master)
+(venv) λ py manager.py add-portfolio
+Name: port_1
+Description: portfolio 1
+Added portfolio port_1
+
+.\working-with-databases\04\demo(master)
+(venv) λ py manager.py add-investment
+Coin: bitcoin
+Currency: eur
+Amount: 122.0
+1: port_1
+Select a portfolio: 1
+Added new bitcoin investment to port_1
+"""
