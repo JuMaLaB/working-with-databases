@@ -1,0 +1,113 @@
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\watchlists.py --help
+Usage: watchlists.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add-coin         Add a coin to a watchlist
+  add-investment   Add a new investment to the portfolio
+  add-watchlist    Add a new watchlist to the portfolio
+  clear-data       Clear the database
+  seed-data        Seed the database with sample data, use the --force...
+  view-investment  See the details of an investment
+  view-watchlist   View the coins in a watchlist
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\watchlists.py view-investment
+1: bitcoin
+2: ethereum
+3: dogecoin
+Select an investment: 3
+You bought 100.0 dogecoin for 31.0857 EUR
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\watchlists.py add-watchlist
+Name: Juju WatchList
+Description: It's mine
+Currency: eur
+Added watchlist Juju WatchList
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\watchlists.py add-coin
+Coin: fakecoin
+Note: It's another fake coin
+1: Bulls
+2: Bears
+3: Juju WatchList
+Select a watchlist: 3
+Added fakecoin to Juju WatchList
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\watchlists.py view-watchlist
+1: Bulls
+2: Bears
+3: Juju WatchList
+Select a watchlist: 3
+Watchlist: Juju WatchList in eur
+It's mine
+Coins:
+>> KeyError key :fakecoin doesn't exits
+
+-------------------------------------------------
+# documents in watchlist db
+[
+  {
+    "_id": "677fd63fb509d9e367c6c0f9",
+    "name": "Bulls",
+    "metadata": {
+      "currency": "USD",
+      "description": "Coins to buy",
+      "date_created": "2025-01-09T00:00:00.000Z"
+    },
+    "coins": [
+      {
+        "coin": "bitcoin",
+        "note": "Bitcoin is number one!",
+        "date_added": "2025-01-09T00:00:00.000Z"
+      },
+      {
+        "coin": "ethereum",
+        "note": "Ethereum is number two!",
+        "date_added": "2025-01-09T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "_id": "677fd63fb509d9e367c6c0fa",
+    "name": "Bears",
+    "metadata": {
+      "currency": "GBP",
+      "description": "Coins to sell",
+      "date_created": "2025-01-09T00:00:00.000Z"
+    },
+    "coins": [
+      {
+        "coin": "solana",
+        "note": "Meh ...",
+        "date_added": "2025-01-09T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "_id": "677fd6f0b6d7b0e2bf7a9103",
+    "name": "Juju WatchList",
+    "metadata": {
+      "currency": "eur",
+      "description": "It's mine",
+      "date_created": "2025-01-09T00:00:00.000Z"
+    },
+    "coins": [
+      {
+        "coin": "fakecoin",
+        "note": "It's another fake coin",
+        "date_added": "2025-01-09T00:00:00.000Z"
+      }
+    ]
+  }
+]

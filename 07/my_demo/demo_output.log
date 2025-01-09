@@ -30,6 +30,41 @@ Select an investment: 4
 You bought 10.0 litecoin for 160891.7 JPY
 
 -------------------------------------------------
+# documents in investments db
+[
+  {
+    "_id": "677fd1327a2420bd20d153cf",
+    "coin": "bitcoin",
+    "currency": "USD",
+    "amount": 1,
+    "timestamp": "2025-01-07T14:30:49.436Z",
+    "sell": false
+  },
+  {
+    "_id": "677fd1327a2420bd20d153d0",
+    "coin": "ethereum",
+    "currency": "GBP",
+    "amount": 10,
+    "timestamp": "2025-01-08T13:49:30.458Z",
+    "sell": true
+  },
+  {
+    "_id": "677fd1327a2420bd20d153d1",
+    "coin": "dogecoin",
+    "currency": "EUR",
+    "amount": 100,
+    "timestamp": "2025-01-06T13:50:29.459Z",
+    "sell": false
+  },
+  {
+    "_id": "677fd1badf3be3a8d6480c19",
+    "coin": "litecoin",
+    "currency": "JPY",
+    "amount": 10,
+    "timestamp": "2025-01-09T14:40:10.273Z",
+    "sell": false
+  }
+]
 
 -------------------------------------------------
 
