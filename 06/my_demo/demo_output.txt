@@ -1,0 +1,100 @@
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py  --help
+Usage: manager.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add-coin        Add a new coin to a watchlist
+  add-watchlist   Add a new watchlist to the portfolio
+  clear-data      Clear the database
+  remove-coin     Remove a coin from a watchlist
+  seed-data       Seed the database
+  view-watchlist  View the coins and current prices of a watchlist
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py add-watchlist --help
+Usage: manager.py add-watchlist [OPTIONS]
+
+  Add a new watchlist to the portfolio
+
+Options:
+  --name TEXT         Name of the watchlist
+  --description TEXT  Description of the watchlist
+  --currency TEXT     Currency to display prices
+  --help              Show this message and exit.
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py clear-data
+All data cleared!
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py seed-data
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py view-watchlist
+1: Bulls
+2: Bears
+Select a watchlist: 1
+Watchlist: Bulls in usd
+Coins to buy
+-------------------------
+Coins:
+  1: bitcoin - The most popular coin
+     Current price: 93506
+  2: ethereum - The second most popular coin
+     Current price: 3316.94
+Prices provided by CoinGecko
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py add-watchlist
+Name: Julien Watchlist
+Description: My super watchlist
+Currency: eur
+Added new Julien Watchlist watchlist
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py add-coin
+Coin: catcoin
+Note: It's not really a coin
+1: Bulls
+2: Bears
+3: Julien Watchlist
+Select a watchlist: 3
+Added catcoin to Julien Watchlist
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py view-watchlist
+1: Bulls
+2: Bears
+3: Julien Watchlist
+Select a watchlist: 3
+Watchlist: Julien Watchlist in eur
+My super watchlist
+-------------------------
+Coins:
+  1: catcoin - It's not really a coin
+     Current price: 0.327859
+Prices provided by CoinGecko
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\06(master)
+(venv) λ py .\my_demo\manager.py remove-coin
+1: Bulls
+2: Bears
+3: Julien Watchlist
+Select a watchlist: 1
+1: bitcoin
+2: ethereum
+Select a coin: 2
+Removed ethereum from Bulls
+
+-------------------------------------------------

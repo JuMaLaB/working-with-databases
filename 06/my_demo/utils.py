@@ -16,6 +16,7 @@ def get_coin_prices(coin_ids, currency):
     return coin_prices
 
 
+# init data
 def seed_data(collection):
     collection.insert_many([
         {

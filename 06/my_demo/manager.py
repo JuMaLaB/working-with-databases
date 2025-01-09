@@ -12,6 +12,7 @@ client = MongoClient()
 
 portfolio = client.portfolio
 
+# we will no more use investments db but we will use watchlist
 watchlists = portfolio.watchlists
 
 
