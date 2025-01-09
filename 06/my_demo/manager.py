@@ -1,79 +1,140 @@
-""" from pymongo import MongoClient
-
-client = MongoClient() """
-
 import datetime
 
-import requests
 import click
-
+from bson import ObjectId
 from pymongo import MongoClient
 
+from utils import get_coin_prices
+from utils import seed_data as utils_seed_data
 
-def get_coin_price(coin_id, currency):
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={currency}"
-    data = requests.get(url).json()
-    coin_price = data[coin_id][currency]
-    return coin_price
+
+client = MongoClient()
+
+portfolio = client.portfolio
+
+watchlists = portfolio.watchlists
+
+
+def _get_all_watchlist_names():
+    return list(watchlists.find({}, {"name": 1}))
+
+
+def _select_watchlist(watchlist_names):
+    for index, watchlist in enumerate(watchlist_names):
+        print(f"{index + 1}: {watchlist['name']}")
+    selected_watchlist_index = int(input("Select a watchlist: ")) - 1
+    selected_watchlist_id = watchlist_names[selected_watchlist_index]["_id"]
+    return watchlists.find_one({"_id": ObjectId(selected_watchlist_id)})
+
+
+def _select_coin_from_watchlist(watchlist):
+    for index, coin in enumerate(watchlist["coins"]):
+        print(f"{index + 1}: {coin['coin']}")
+    selected_coin_index = int(input("Select a coin: ")) - 1
+    return watchlist["coins"][selected_coin_index]
+
+
+def _add_coin_to_watchlist(watchlist_oid, coin):
+    filter = {"_id": ObjectId(watchlist_oid)}
+    update = {"$push": {"coins": coin}}
+    watchlists.update_one(filter, update)
+
+
+def _remove_coin_from_watchlist(watchlist_oid, selected_coin):
+    filter = {"_id": ObjectId(watchlist_oid)}
+    update = {"$pull": {"coins": {"coin": selected_coin}}}
+    watchlists.update_one(filter, update)
+
 
 @click.group()
 def cli():
     pass
 
-@click.command()
-@click.option("--coin_id", default="bitcoin")
-@click.option("--currency", default="usd")
-def show_coin_price(coin_id, currency):
-    coin_price = get_coin_price(coin_id, currency)
-    print(f"The price of {coin_id} is {coin_price:.2f} {currency.upper()}")
 
-@click.command()
-@click.option("--coin_id")
-@click.option("--currency")
-@click.option("--amount", type=float)
-@click.option("--sell", is_flag=True)
-def add_investment(coin_id, currency, amount, sell):
-    investment_document = {
-        "coin_id": coin_id,
-        "currency": currency,
-        "amount": amount,
-        "sell": sell,
-        "timestamp": datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-    }
-    # insert a document into the invetments collection (can be a list of dictionaries)
-    investments.insert_one(investment_document)
+@click.command(help="Clear the database")
+def clear_data():
+    portfolio.drop_collection("watchlists")
 
-    if sell:
-        print(f"Added sell of {amount} {coin_id}")
+    print("All data cleared!")
+
+
+@click.command(help="Seed the database")
+@click.option("--force", is_flag=True, help="Seed even if database is not empty")
+def seed_data(force):
+    if force:
+        utils_seed_data(watchlists)
+    elif watchlists.count_documents({}) > 0:
+        print("The database is not empty, use the --force option or the clear-data command")
     else:
-        print(f"Added buy of {amount} {coin_id}")
+        utils_seed_data(watchlists)
 
-@click.command()
-@click.option("--coin_id")
-@click.option("--currency")
-def get_investment_value(coin_id, currency):
-    coin_price = get_coin_price(coin_id, currency)
-    buy_result = investments.find({"coin_id": coin_id, "currency": currency, "sell": False})
-    sell_result = investments.find({"coin_id": coin_id, "currency": currency, "sell": True})
-    buy_amount = sum([doc["amount"] for doc in buy_result])
-    sell_amount = sum([doc["amount"] for doc in sell_result])
 
-    total = buy_amount - sell_amount
+@click.command(help="Add a new watchlist to the portfolio")
+@click.option("--name", prompt=True, help="Name of the watchlist")
+@click.option("--description", prompt=True, help="Description of the watchlist")
+@click.option("--currency", prompt=True, help="Currency to display prices")
+def add_watchlist(name, description, currency):
+    metadata = {
+        "description": description,
+        "currency": currency,
+        "date_added": datetime.datetime.now()
+    }
+    watchlist = {
+        "name": name,
+        "metadata": metadata,
+        "coins": []
+    }
+    watchlists.insert_one(watchlist)
 
-    print(f"You own a total of {total} {coin_id} worth {total * coin_price} {currency.upper()}")
+    print(f"Added new {name} watchlist")
 
-@click.command()
-@click.option("--csv_file")
-def import_investments(csv_file):
-    pass
 
-cli.add_command(show_coin_price)
-cli.add_command(add_investment)
-cli.add_command(get_investment_value)
-cli.add_command(import_investments)
+@click.command(help="Add a new coin to a watchlist")
+@click.option("--coin", prompt=True, help="The coin to add")
+@click.option("--note", prompt=True, help="A note")
+def add_coin(coin, note):
+    selected_watchlist = _select_watchlist(_get_all_watchlist_names())
+    _add_coin_to_watchlist(selected_watchlist["_id"], {
+        "coin": coin, "note": note, "date_added": datetime.datetime.now()
+    })
+    print(f"Added {coin} to {selected_watchlist['name']}")
+
+
+@click.command(help="Remove a coin from a watchlist")
+def remove_coin():
+    selected_watchlist = _select_watchlist(_get_all_watchlist_names())
+    selected_coin = _select_coin_from_watchlist(selected_watchlist)
+    _remove_coin_from_watchlist(
+        selected_watchlist["_id"], selected_coin["coin"])
+    print(f"Removed {selected_coin['coin']} from {selected_watchlist['name']}")
+
+
+@click.command(help="View the coins and current prices of a watchlist")
+def view_watchlist():
+    selected_watchlist = _select_watchlist(_get_all_watchlist_names())
+
+    print(
+        f"Watchlist: {selected_watchlist['name']} in {selected_watchlist['metadata']['currency']}")
+    print(f"{selected_watchlist['metadata']['description']}")
+    print(f"{'-' * 25}")
+    print("Coins:")
+    coin_prices = get_coin_prices(
+        [coin["coin"] for coin in selected_watchlist["coins"]],
+        selected_watchlist["metadata"]["currency"])
+    for index, coin in enumerate(selected_watchlist["coins"]):
+        print(
+            f"{str(index + 1).rjust(3, ' ')}: {coin['coin']} - {coin['note']}")
+        print(f"     Current price: {coin_prices[coin['coin']]}")
+    print("Prices provided by CoinGecko")
+
+
+cli.add_command(add_coin)
+cli.add_command(add_watchlist)
+cli.add_command(clear_data)
+cli.add_command(remove_coin)
+cli.add_command(seed_data)
+cli.add_command(view_watchlist)
+
 
 if __name__ == "__main__":
-    client = MongoClient()
-    db = client.portfolio # get or create portfolio db
-    investments = db.investments # get or create investments collection
     cli()
