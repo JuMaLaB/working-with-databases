@@ -1,0 +1,40 @@
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\manager.py  --help
+Usage: manager.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add-investment   Add a new investment to the portfolio
+  clear-data       Clear the database
+  seed-data        Seed the database with sample data, use the --force...
+  view-investment  See the details of an investment
+
+-------------------------------------------------
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\manager.py add-investment
+Coin: litecoin
+Currency: JPY
+Amount: 10
+Added buy for 10 litecoin in JPY
+
+C:\Users\julien\workspace\[python]\working-with-databases\07(master)
+(venv) λ py .\my_demo\manager.py view-investment
+1: bitcoin
+2: ethereum
+3: dogecoin
+4: litecoin
+Select an investment: 4
+You bought 10.0 litecoin for 160891.7 JPY
+
+-------------------------------------------------
+
+-------------------------------------------------
+
+-------------------------------------------------
+
+-------------------------------------------------
+
+-------------------------------------------------
